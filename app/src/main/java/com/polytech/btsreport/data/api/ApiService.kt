@@ -13,7 +13,7 @@ import retrofit2.http.Part
 
 interface ApiService {
 
-    @POST("/login")
+    @POST("technicians/login")
     suspend fun login(
         @Body loginForm: LoginForm
     ) : Response<LoginResponse>

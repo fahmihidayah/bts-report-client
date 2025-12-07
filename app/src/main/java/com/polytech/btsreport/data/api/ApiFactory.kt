@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiFactory {
 
-    private const val BASE_URL = "https://bts-report.up.railway.app/api" // Replace with your actual base URL
+    private const val BASE_URL = "https://bts-report.up.railway.app/api/" // Replace with your actual base URL
 
     fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
