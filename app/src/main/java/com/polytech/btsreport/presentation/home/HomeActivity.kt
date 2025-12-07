@@ -33,7 +33,11 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         visitationAdapter = VisitationAdapter { visitation ->
-            val intent = android.content.Intent(this, com.polytech.btsreport.presentation.report.ReportActivity::class.java)
+            val intent = android.content.Intent(this, com.polytech.btsreport.presentation.report.ReportActivity::class.java).apply {
+                putExtra("VISITATION_ID", visitation.id)
+                putExtra("VISITATION_STATUS", visitation.visitStatus)
+                putExtra("SITE_NAME", visitation.siteName)
+            }
             startActivity(intent)
         }
 
