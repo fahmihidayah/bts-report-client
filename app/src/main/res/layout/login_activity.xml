@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <!-- ViewModel will be declared here -->
+        <variable
+            name="loginViewModel"
+            type="com.polytech.btsreport.presentation.login.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +37,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/appbar">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_input_layout"
@@ -47,6 +49,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_edit_text"
+                    android:text="@={loginViewModel.loginForm.email}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress" />
@@ -63,6 +66,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_edit_text"
+                    android:text="@={loginViewModel.loginForm.password}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword" />
@@ -70,6 +74,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_button"
+                android:onClick="@{() -> loginViewModel.login()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Login" />
