@@ -1,13 +1,14 @@
 package com.polytech.btsreport.presentation.report
 
 import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polytech.btsreport.data.dto.response.Visitation
 import com.polytech.btsreport.data.repository.ReportRepository
-import com.polytech.btsreport.utils.toFile
 import com.polytech.btsreport.utils.toMultipartBodyPart
 import com.polytech.btsreport.utils.toRequestBody
 import kotlinx.coroutines.launch
@@ -22,8 +23,8 @@ class ReportViewModel : ViewModel() {
     private val _reportState = MutableLiveData<ReportState>(ReportState.Idle)
     val reportState: LiveData<ReportState> = _reportState
 
-    fun updateImage(image: Bitmap) {
-        _reportForm.value = _reportForm.value?.copy(image = image)
+    fun updateImage(image: String) {
+        _reportForm.value = _reportForm.value?.copy(filePath = image)
     }
 
     fun updateDescription(description: String) {
@@ -33,7 +34,7 @@ class ReportViewModel : ViewModel() {
     fun submitReport(visitation: Visitation, cacheDir: File) {
         val form = _reportForm.value ?: return
 
-        if (form.image == null) {
+        if (form.filePath == null) {
             _reportState.value = ReportState.Error("Please capture an image")
             return
         }
@@ -50,14 +51,14 @@ class ReportViewModel : ViewModel() {
 
         val newState = determineNewState(visitation.visitStatus)
 
+        Log.d("Report ", "New State ${newState}")
+
         viewModelScope.launch {
             _reportState.value = ReportState.Loading
 
             try {
-                val imageFile = File(cacheDir, "report_image_${System.currentTimeMillis()}.jpg")
-                form.image.toFile(imageFile)
 
-                val imagePart = imageFile.toMultipartBodyPart("image")
+                val imagePart = File(form.filePath).toMultipartBodyPart("image")
                 val descriptionBody = form.description.toRequestBody()
 
                 val result = reportRepository.updateVisitation(
@@ -70,11 +71,9 @@ class ReportViewModel : ViewModel() {
                 result.fold(
                     onSuccess = {
                         _reportState.value = ReportState.Success("Report submitted successfully")
-                        imageFile.delete()
                     },
                     onFailure = { exception ->
                         _reportState.value = ReportState.Error(exception.message ?: "Failed to submit report")
-                        imageFile.delete()
                     }
                 )
             } catch (e: Exception) {
@@ -85,9 +84,9 @@ class ReportViewModel : ViewModel() {
 
     private fun determineNewState(currentState: String?): String {
         return when (currentState?.lowercase()) {
-            "new" -> "in_progress"
+            "new" -> "progress"
             "in_progress" -> "complete"
-            else -> "in_progress"
+            else -> "progress"
         }
     }
 

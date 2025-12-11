@@ -2,31 +2,33 @@ package com.polytech.btsreport.presentation.report
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import com.polytech.btsreport.data.dto.response.Visitation
 import com.polytech.btsreport.databinding.ReportActivityBinding
+import java.io.File
 
 class ReportActivity : AppCompatActivity() {
 
     private lateinit var binding: ReportActivityBinding
     private val reportViewModel: ReportViewModel by viewModels()
     private var currentVisitation: Visitation? = null
-
+    lateinit var imageUri: Uri
+    lateinit var file : File
     private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.TakePicture()
     ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
-            imageBitmap?.let {
-                binding.imageViewResult.setImageBitmap(it)
-                reportViewModel.updateImage(it)
-            }
+        if (result) {
+            binding.imageViewResult.setImageURI(imageUri)
+            reportViewModel.updateImage(file.path)
         }
     }
 
@@ -34,6 +36,12 @@ class ReportActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ReportActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        file = File(this.cacheDir, "temp_image.jpg")
+        imageUri = FileProvider.getUriForFile(
+            this,
+            "com.polytech.btsreport.fileprovider", // Replace with your app's file provider authority
+            file
+        )
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = "Report"
@@ -99,6 +107,6 @@ class ReportActivity : AppCompatActivity() {
 
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraLauncher.launch(cameraIntent)
+        cameraLauncher.launch(imageUri)
     }
 }

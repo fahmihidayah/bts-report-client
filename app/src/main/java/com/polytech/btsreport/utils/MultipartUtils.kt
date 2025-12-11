@@ -17,11 +17,3 @@ fun File.toMultipartBodyPart(partName: String): MultipartBody.Part {
 fun String.toRequestBody(): RequestBody {
     return this.toRequestBody("text/plain".toMediaTypeOrNull())
 }
-
-fun Bitmap.toFile(file: File): File {
-    FileOutputStream(file).use { out ->
-        this.compress(Bitmap.CompressFormat.JPEG, 100, out)
-        out.flush()
-    }
-    return file
-}

@@ -23,12 +23,12 @@ interface ApiService {
     @GET("technicians/visitations")
     suspend fun getVisitations() : Response<ListVisitationsResponse>
 
-    @POST("/visitations/{id}/{state}")
+    @POST("visitations/{id}/{state}")
     @Multipart
     suspend fun updateVisitation(
         @Path("id") id : String,
-        @Part("state") state : String,
-        @Part("image") file: MultipartBody.Part,
+        @Path("state") state : String,
+        @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody
     )
 
