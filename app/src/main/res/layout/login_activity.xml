@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="form"
+            type="com.polytech.btsreport.data.dto.LoginForm" />
         <!-- ViewModel will be declared here -->
     </data>
 
@@ -47,6 +50,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_edit_text"
+                    android:text="@{form.email}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress" />
@@ -62,6 +66,7 @@
                 app:endIconMode="password_toggle">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:text="@{form.password}"
                     android:id="@+id/password_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
