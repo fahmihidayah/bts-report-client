@@ -72,6 +72,9 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.recyclerview)
 
+    // MMKV for key-value storage
+    implementation("com.tencent:mmkv:2.3.0")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

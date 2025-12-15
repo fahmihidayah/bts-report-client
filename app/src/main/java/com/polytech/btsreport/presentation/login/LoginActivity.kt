@@ -1,18 +1,19 @@
 package com.polytech.btsreport.presentation.login
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.polytech.btsreport.data.dto.LoginForm
 import com.polytech.btsreport.databinding.LoginActivityBinding
+import com.polytech.btsreport.presentation.home.HomeActivity
 
 class LoginActivity : AppCompatActivity() {
-    var loginForm : LoginForm = LoginForm(
-        email = "",
-        password = ""
-    )
+
     private lateinit var binding: LoginActivityBinding
-    private val loginViewModel : LoginViewModel by viewModels()
+
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +23,46 @@ class LoginActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = "Login"
 
-        binding.form = loginForm
+        binding.loginViewModel = loginViewModel
+        binding.lifecycleOwner = this
 
+        observeLoginState()
+    }
+
+    private fun observeLoginState() {
+        loginViewModel.loginState.observe(this) { state ->
+            when (state) {
+                is LoginState.Idle -> {
+                    hideLoading()
+                }
+                is LoginState.Loading -> {
+                    showLoading()
+                }
+                is LoginState.Success -> {
+                    hideLoading()
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    navigateToHome()
+                }
+                is LoginState.Error -> {
+                    hideLoading()
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun showLoading() {
+        binding.loginButton.isEnabled = false
+        binding.loginButton.text = "Logging in..."
+    }
+
+    private fun hideLoading() {
+        binding.loginButton.isEnabled = true
+        binding.loginButton.text = "Login"
+    }
+
+    private fun navigateToHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }
